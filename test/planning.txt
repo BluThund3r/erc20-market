@@ -1,0 +1,85 @@
+ERC20
+token1
+token2
+
+cineva care are t1 si t2 creaza un LP - Liquidity Pool 
+100 t1 si 100 t2
+pret 1 t1 = 1 t2
+
+daca exista un LP, poate sa adauge 50 t1 si 50 t2
+
+altcineva care are doar t1, vine si il schimba cu t2
+cumpara 10 t2 pentru 10 t1
+
+raman 90 t2, si 110 t1
+
+
+
+Testare:
+trimetere token intre 2 contracte
+js - ethers pentru teste
+
+apelam totalSupply
+
+Optiune: resetam reteau la fiecare test
+
+testam constructorul
+< 0
+0 si < intMax + balanceOf
+intMax
+
+aprove
+Dupa spender:
+adresa valida
+adresa invalida
+
+test totalSupply
+
+tranfer
+Clase de echivalenta:
+Dupa tokens: 
+< 0
+>= 0 si <= balanceOf
+balanceOf
+
+Dupa receiver:
+adresa valida
+adresa invalida
+
+testam balanceOf
+
+Dupa tokens:
+< 0
+>=0
+
+allowance
+Dupa tokenOwner:
+adresa valida
+adresa invalida
+
+Dupa spender:
+adresa valida - cu 0 drepturi
+aadresa valida cu drept pe 1000
+adresa invalida
+
+testam transferFrom
+Dupa message spender:
+are drepturi suficiente
+fara drepturi suficiente
+
+Dupa from:
+adresa invalida
+adresa valida
+
+Dupa to:
+adresa invalida
+adresa valida
+
+Dupa tokens:
+< 0
+>= 0 si <= balanceOf
+balanceOf
+
+
+owner: 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
+spender: 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2
