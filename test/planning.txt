@@ -16,24 +16,22 @@ raman 90 t2, si 110 t1
 
 
 Testare:
-trimetere token intre 2 contracte
 js - ethers pentru teste
 
-apelam totalSupply
-
-Optiune: resetam reteau la fiecare test
-
-testam constructorul
+############## DONE
+testam constructorul + totalSupply
 < 0
-0 si < intMax + balanceOf
+0 si < intMax
 intMax
 
-aprove
+
+
+approve
 Dupa spender:
 adresa valida
 adresa invalida
 
-test totalSupply
+
 
 tranfer
 Clase de echivalenta:
@@ -47,12 +45,13 @@ adresa valida
 adresa invalida
 
 testam balanceOf
-
 Dupa tokens:
 < 0
 >=0
 
-allowance
+
+
+testam allowance
 Dupa tokenOwner:
 adresa valida
 adresa invalida
@@ -61,6 +60,8 @@ Dupa spender:
 adresa valida - cu 0 drepturi
 aadresa valida cu drept pe 1000
 adresa invalida
+
+
 
 testam transferFrom
 Dupa message spender:

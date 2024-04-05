@@ -3,7 +3,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 
-contract MyERC20{
+contract ERC20{
 
     uint256 nbTokens;   
 
@@ -29,6 +29,7 @@ contract MyERC20{
     }
 
     constructor(uint256 tokens) {
+        require(tokens > 0, "Initial supply should be a positive integer");
         nbTokens = tokens;
         balances[msg.sender] = tokens;
     }
