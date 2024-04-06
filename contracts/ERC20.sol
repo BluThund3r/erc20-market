@@ -10,9 +10,9 @@ contract ERC20{
     mapping(address => uint256) balances;
     mapping(address => mapping (address => uint256)) spendlimit;
 
-    string public name ="Token optional BC";               
-    uint8 public decimals = 0;                
-    string public symbol = 'TOP';  
+    string public name ="Custom ERC20";               
+    uint8 public decimals = 18;                
+    string public symbol = 'CERC20';  
 
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Transfer(address indexed from, address indexed to, uint tokens);

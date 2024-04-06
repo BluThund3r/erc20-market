@@ -21,20 +21,29 @@ js - ethers pentru teste
 ############## DONE
 testam constructorul + totalSupply
 < 0
-0 si < intMax
-intMax
+0 si < 2**256
+>= 2**256
 
 
 
+
+############## TODO TESTS IN js
 approve
 Dupa spender:
 adresa valida
 adresa invalida
 
+Dupa tokens:
+< 0
+>= 0 && < 2**256
+>= 2**256
 
 
-tranfer
-Clase de echivalenta:
+
+
+
+############## TODO TESTS IN js
+testam transfer
 Dupa tokens: 
 < 0
 >= 0 si <= balanceOf
@@ -44,13 +53,19 @@ Dupa receiver:
 adresa valida
 adresa invalida
 
+
+
+############## TODO TESTS IN js
 testam balanceOf
-Dupa tokens:
-< 0
->=0
+Dupa adresa:
+valida
+invalida
 
 
 
+
+
+############## TODO TESTS IN js
 testam allowance
 Dupa tokenOwner:
 adresa valida
@@ -63,11 +78,10 @@ adresa invalida
 
 
 
-testam transferFrom
-Dupa message spender:
-are drepturi suficiente
-fara drepturi suficiente
 
+
+############## TODO TESTS IN js
+testam transferFrom
 Dupa from:
 adresa invalida
 adresa valida
@@ -80,6 +94,10 @@ Dupa tokens:
 < 0
 >= 0 si <= balanceOf
 balanceOf
+
+
+
+
 
 
 owner: 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
