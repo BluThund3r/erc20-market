@@ -42,7 +42,7 @@ Dupa tokens:
 
 
 
-############## TODO TESTS IN js
+############## DONE
 testam transfer
 Dupa tokens: 
 < 0
@@ -55,7 +55,7 @@ adresa invalida
 
 
 
-############## TODO TESTS IN js
+############## DONE
 testam balanceOf
 Dupa adresa:
 valida
@@ -65,7 +65,7 @@ invalida
 
 
 
-############## TODO TESTS IN js
+############## DONE
 testam allowance
 Dupa tokenOwner:
 adresa valida
@@ -80,7 +80,7 @@ adresa invalida
 
 
 
-############## TODO TESTS IN js
+############## DONE
 testam transferFrom
 Dupa from:
 adresa invalida
