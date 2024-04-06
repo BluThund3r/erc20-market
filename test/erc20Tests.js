@@ -14,9 +14,14 @@ describe("ERC20", function () {
   async function deployContractOK() {
     const initialTokens = 10 ** 6;
     const ERC20 = await ethers.getContractFactory("ERC20");
-    const erc20Contract = await ERC20.deploy(initialTokens);
-    console.log(`Deployed contract at address: ${erc20Contract.address}`);
-    return { erc20Contract };
+
+    const [owner, user2, user3, user4, user5] = await ethers.getSigners();
+
+    const erc20Contract = await ERC20.connect(owner).deploy(initialTokens);
+
+    await erc20Contract.connect(owner).approve(user2.address, 1000);
+
+    return { erc20Contract, owner, user2, user3, user4, user5 };
   }
 
   describe("Deployment (constructor)", function () {
@@ -44,7 +49,45 @@ describe("ERC20", function () {
   });
 
   describe("Approve function", function () {
-    //! TODO: Add tests
+    it("Should fail to approve with an invalid address", async function () {
+      const { erc20Contract, owner } = await loadFixture(deployContractOK);
+      await expect(
+        erc20Contract.connect(owner).approve("0x111111111", 1000)
+      ).to.be.rejectedWith(
+        "Method 'HardhatEthersProvider.resolveName' is not implemented" // This is a hardhat error
+        // in the remix IDE, the error is "invalid address"
+      );
+    });
+
+    it("Should fail to approve with a negative amount", async function () {
+      const { erc20Contract, owner, user2 } = await loadFixture(
+        deployContractOK
+      );
+      await expect(
+        erc20Contract.connect(owner).approve(user2.address, -1)
+      ).to.be.rejectedWith("value=-1");
+    });
+
+    it("Should fail due to uint overflow", async function () {
+      const { erc20Contract, owner, user2 } = await loadFixture(
+        deployContractOK
+      );
+      await expect(
+        erc20Contract.connect(owner).approve(user2.address, 2 ** 256)
+      ).to.be.rejectedWith("overflow");
+    });
+
+    it("Should pass and set the spendlimit to 100", async function () {
+      const { erc20Contract, owner, user2 } = await loadFixture(
+        deployContractOK
+      );
+
+      await erc20Contract.connect(owner).approve(user2.address, 100);
+
+      expect(
+        await erc20Contract.allowance(owner.address, user2.address)
+      ).to.equal(100);
+    });
   });
 
   describe("Transfer function", function () {
