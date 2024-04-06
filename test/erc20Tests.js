@@ -48,7 +48,7 @@ describe("ERC20", function () {
     });
   });
 
-  describe("Approve function", function () {
+  describe("approve function", function () {
     it("Should fail to approve with an invalid address", async function () {
       const { erc20Contract, owner } = await loadFixture(deployContractOK);
       await expect(
@@ -90,15 +90,19 @@ describe("ERC20", function () {
     });
   });
 
-  describe("Transfer function", function () {
+  describe("transfer function", function () {
     //! TODO: Add tests
   });
 
-  describe("Allowance function", function () {
+  describe("balanceOf function", function () {
     //! TODO: Add tests
   });
 
-  describe("TransferFrom function", function () {
+  describe("allowance function", function () {
+    //! TODO: Add tests
+  });
+
+  describe("transferFrom function", function () {
     //! TODO: Add tests
   });
 });
