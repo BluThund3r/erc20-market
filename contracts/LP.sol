@@ -32,6 +32,7 @@ contract LP {
     function firstAddLiquidity(uint256 amountA, uint256 amountB) public {
         // Require that the contract has not been initialized yet
         require(reserveA == 0 && reserveB == 0, "Already initialized");
+        
         tokenA.transferFrom(msg.sender, address(this), amountA);
         tokenB.transferFrom(msg.sender, address(this), amountB);
         reserveA += amountA;
@@ -51,7 +52,7 @@ contract LP {
     }
 
     function removeLiquidity(uint256 amountA) public {
-        uint256 amountB = (amountA * reserveB) / reserveA;
+        uint256 amountB = getAmountBNecesary(amountA);
         require(
             amountA <= reserveA && amountB <= reserveB,
             "Insufficient liquidity"
