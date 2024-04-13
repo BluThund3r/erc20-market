@@ -193,4 +193,35 @@ describe("LP Tests", function () {
         expect(LPBalanceA).to.equal(1100);
         expect(LPBalanceB).to.equal(910);
     });
+
+    // it("Should not allow another user to remove liquidity", async function () {
+    //     const { erc20Contract: tokenA } = await deployERC20ContractOK();
+    //     const { erc20Contract: tokenB } = await deployERC20ContractOK();
+
+    //     const LP = await deployContract(tokenA, tokenB);
+
+    //     const amountA = 500;
+    //     const amountB = 1000;
+
+    //     await tokenA.approve(LP.target, amountA);
+    //     await tokenB.approve(LP.target, amountB);
+
+    //     await LP.firstAddLiquidity(amountA, amountB);
+
+    //     const [user2, user3, user4, user5, user6] = await ethers.getSigners();
+
+    //     const amount = 100;
+
+    //     await LP.connect(user6).removeLiquidity(amount);
+
+    //     // This should fail
+
+    //     const balanceAuser = await tokenA.balanceOf(user6.address);
+
+    //     console.log(balanceAuser.toString());
+
+    //     // expect balanceAuser to be 0
+    //     expect(balanceAuser).to.equal(0);
+
+    // });
 });
