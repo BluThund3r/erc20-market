@@ -66,7 +66,7 @@ contract LP {
         uint256 amountOut = getReturn(fromToken, amountIn);
         require(amountOut > 0, "Invalid swap amount");
 
-        if (fromToken == tokenA) {
+        if (fromToken == tokenA) {            
             IERC20(tokenA).transferFrom(msg.sender, address(this), amountIn);
             IERC20(tokenB).transfer(msg.sender, amountOut);
             reserveA += amountIn;
