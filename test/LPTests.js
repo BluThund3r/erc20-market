@@ -73,5 +73,44 @@ describe("LP Tests", function () {
         expect(LPBalanceB).to.equal(0);
     });
 
-    
+    it("Should have a specific price 1", async function () {
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+
+        const LP = await deployContract(tokenA, tokenB);
+
+        const amountA = 1000;
+        const amountB = 1000;
+
+        await tokenA.approve(LP.target, amountA);
+        await tokenB.approve(LP.target, amountB);
+
+        await LP.addLiquidity(amountA, amountB);
+
+        const price = await LP.getPrice();
+
+        expect(price).to.equal(1 * 1e9);
+    });
+
+    it("Should have a specific price 50", async function () {
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+
+        const LP = await deployContract(tokenA, tokenB);
+
+        const amountA = 1000;
+        const amountB = 50000;
+        // 1 tokenA = 50 tokenB
+
+        await tokenA.approve(LP.target, amountA);
+        await tokenB.approve(LP.target, amountB);
+
+        await LP.addLiquidity(amountA, amountB);
+
+        const price = await LP.getPrice();
+
+        expect(price).to.equal(50 * 1e9);
+    });
+
+
 });

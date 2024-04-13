@@ -17,6 +17,8 @@ interface IERC20 {
 }
 
 contract LP {
+    uint256 public constant DECIMAL_FACTOR = 1e9;
+
     IERC20 public tokenA;
     IERC20 public tokenB;
     uint256 public reserveA;
@@ -36,7 +38,7 @@ contract LP {
 
     function removeLiquidity(uint256 amountA, uint256 amountB) public {
         require(
-            reserveA >= amountA && reserveB >= amountB,
+            amountA <= reserveA && amountB <= reserveB,
             "Insufficient liquidity"
         );
         IERC20(tokenA).transfer(msg.sender, amountA);
@@ -75,5 +77,9 @@ contract LP {
             reserveB += amountIn;
             reserveA -= amountOut;
         }
+    }
+
+    function getPrice() public view returns (uint256) {
+        return (reserveB * DECIMAL_FACTOR) / reserveA;
     }
 }
