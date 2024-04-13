@@ -112,5 +112,26 @@ describe("LP Tests", function () {
         expect(price).to.equal(50 * 1e9);
     });
 
+    it("Should getReturn", async function () {
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+
+        const LP = await deployContract(tokenA, tokenB);
+
+        const amountA = 1000;
+        const amountB = 1000;
+
+        await tokenA.approve(LP.target, amountA);
+        await tokenB.approve(LP.target, amountB);
+
+        await LP.addLiquidity(amountA, amountB);
+
+        const amount = 500;
+
+        const returnAmount = await LP.getReturn(tokenA, amount);
+
+        expect(returnAmount).to.equal(333);
+    });
+
 
 });
