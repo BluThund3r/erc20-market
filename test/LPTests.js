@@ -29,7 +29,7 @@ describe("LP Tests", function () {
         expect(LP).to.not.be.undefined;
     });
 
-    it("Should add liquidity", async function () {
+    it("Should add liquidity for first time", async function () {
         const { erc20Contract: tokenA } = await deployERC20ContractOK();
         const { erc20Contract: tokenB } = await deployERC20ContractOK();
 
@@ -41,7 +41,7 @@ describe("LP Tests", function () {
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
         const LPBalanceA = await tokenA.balanceOf(LP.target);
         const LPBalanceB = await tokenB.balanceOf(LP.target);
@@ -50,27 +50,62 @@ describe("LP Tests", function () {
         expect(LPBalanceB).to.equal(1000);
     });
 
+    it("Should add more liquidity", async function () {
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+
+        const LP = await deployContract(tokenA, tokenB);
+
+        const amountA = 500;
+        const amountB = 1000;
+
+        await tokenA.approve(LP.target, amountA);
+        await tokenB.approve(LP.target, amountB);
+
+        await LP.firstAddLiquidity(amountA, amountB);
+
+        const amount = 1000;
+
+        await tokenA.approve(LP.target, amount);
+        await tokenB.approve(LP.target, LP.getAmountBNecesary(amount));
+
+        await LP.addLiquidity(amount);
+
+        const LPBalanceA = await tokenA.balanceOf(LP.target);
+        const LPBalanceB = await tokenB.balanceOf(LP.target);
+
+        expect(LPBalanceA).to.equal(1500);
+        expect(LPBalanceB).to.equal(3000);
+    });
+
     it("Should remove liquidity", async function () {
         const { erc20Contract: tokenA } = await deployERC20ContractOK();
         const { erc20Contract: tokenB } = await deployERC20ContractOK();
 
         const LP = await deployContract(tokenA, tokenB);
 
-        const amountA = 1000;
+        const amountA = 500;
         const amountB = 1000;
 
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
-        await LP.removeLiquidity(1000, 1000);
+        const amount = 1000;
+
+        await tokenA.approve(LP.target, amount);
+        await tokenB.approve(LP.target, LP.getAmountBNecesary(amount));
+
+        await LP.addLiquidity(amount);
+
+        await LP.removeLiquidity(amount);
 
         const LPBalanceA = await tokenA.balanceOf(LP.target);
         const LPBalanceB = await tokenB.balanceOf(LP.target);
 
-        expect(LPBalanceA).to.equal(0);
-        expect(LPBalanceB).to.equal(0);
+        expect(LPBalanceA).to.equal(500);
+        expect(LPBalanceB).to.equal(1000);
     });
 
     it("Should have a specific price 1", async function () {
@@ -85,7 +120,7 @@ describe("LP Tests", function () {
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
         const price = await LP.getPrice();
 
@@ -100,12 +135,11 @@ describe("LP Tests", function () {
 
         const amountA = 1000;
         const amountB = 50000;
-        // 1 tokenA = 50 tokenB
 
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
         const price = await LP.getPrice();
 
@@ -124,7 +158,7 @@ describe("LP Tests", function () {
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
         const amount = 500;
 
@@ -145,7 +179,7 @@ describe("LP Tests", function () {
         await tokenA.approve(LP.target, amountA);
         await tokenB.approve(LP.target, amountB);
 
-        await LP.addLiquidity(amountA, amountB);
+        await LP.firstAddLiquidity(amountA, amountB);
 
         const amount = 100;
 
@@ -159,6 +193,4 @@ describe("LP Tests", function () {
         expect(LPBalanceA).to.equal(1100);
         expect(LPBalanceB).to.equal(910);
     });
-
-
 });
