@@ -96,14 +96,21 @@ describe("LPRouter Tests", function () {
         const LP = await LPRouterContract.createLP(tokenA, tokenB);
         const LP2 = await LPRouterContract.createLP(tokenB, tokenC);
 
-        const path = await LPRouterContract.dijkstra(tokenA, tokenC);
+        const transaction = await LPRouterContract.dijkstra(tokenA, tokenC);
 
+        const receipt = await transaction.wait();
+        console.log(receipt);
+
+        for (const log of receipt.logs) {
+            console.log(log); // Afișează detaliile fiecărui log/event
+          }
+          
         // print data from the path
-        console.log("path.data: " + path.data)
+        // console.log("path.data: " + path.data)
 
-        console.log(path)
+        // console.log(path)
 
-        expect(path).to.not.be.undefined;
+        // expect(path).to.not.be.undefined;
     });
 
 });

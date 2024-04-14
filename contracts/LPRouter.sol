@@ -50,9 +50,16 @@ contract LPRouter {
         address _tokenB = address(__tokenB);
 
         // Initializing the path result
-        address[] memory path;
+        address[] memory path = new address[](tokens.length);
         uint256 pathCount = 0;
 
+        for (uint i = 0; i < tokens.length; i++) {
+            address addr = tokens[i];
+            distances[addr] = type(uint256).max;
+            visited[addr] = false;
+            previous[addr] = address(0);
+        }
+        
         // Initialize distances and visited maps
         distances[_tokenA] = 0;
         visited[_tokenA] = false;
