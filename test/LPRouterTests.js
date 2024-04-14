@@ -62,4 +62,48 @@ describe("LPRouter Tests", function () {
         expect(LP2).to.not.be.undefined;
     });
 
+    it("Should run deijkstra", async function () {
+        const LPRouter = await ethers.getContractFactory("LPRouter");
+        const LPRouterContract = await LPRouter.deploy();
+
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+        const { erc20Contract: tokenC } = await deployERC20ContractOK();
+
+        const LP = await LPRouterContract.createLP(tokenA, tokenB);
+        const LP2 = await LPRouterContract.createLP(tokenB, tokenC);
+
+        const path = await LPRouterContract.dijkstra(tokenA, tokenC);
+
+        expect(path).to.not.be.undefined;
+    });
+
+    it("Should run deijkstra and return a list", async function () {
+        const LPRouter = await ethers.getContractFactory("LPRouter");
+        const LPRouterContract = await LPRouter.deploy();
+
+        const { erc20Contract: tokenA } = await deployERC20ContractOK();
+        const { erc20Contract: tokenB } = await deployERC20ContractOK();
+        const { erc20Contract: tokenC } = await deployERC20ContractOK();
+
+        // console.log("Token A: ")
+        // console.log(tokenA);
+        // console.log("Token B: ")
+        // console.log(tokenB);
+        // console.log("Token C: ")
+        // console.log(tokenC);
+
+        const LP = await LPRouterContract.createLP(tokenA, tokenB);
+        const LP2 = await LPRouterContract.createLP(tokenB, tokenC);
+
+        const path = await LPRouterContract.dijkstra(tokenA, tokenC);
+
+        // print data from the path
+        console.log("path.data: " + path.data)
+
+        console.log(path)
+
+        expect(path).to.not.be.undefined;
+    });
+
 });
