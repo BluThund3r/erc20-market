@@ -24,6 +24,27 @@ contract LP {
     uint256 public reserveA;
     uint256 public reserveB;
 
+    event Swapped(
+        address indexed fromToken,
+        address indexed toToken,
+        uint256 amountIn,
+        uint256 amountOut
+    );
+
+    event AddedLiquidity(
+        address indexed tokenA,
+        address indexed tokenB,
+        uint256 amountA,
+        uint256 amountB
+    );
+
+    event RemovedLiquidity(
+        address indexed tokenA,
+        address indexed tokenB,
+        uint256 amountA,
+        uint256 amountB
+    );
+
     modifier notAlreadyInitialized() {
         // Require that the contract has not been initialized yet
         require(reserveA == 0 && reserveB == 0, "Already initialized");
@@ -63,6 +84,7 @@ contract LP {
         tokenB.transferFrom(msg.sender, address(this), amountB);
         reserveA += amountA;
         reserveB += amountB;
+        AddedLiquidity(tokenA, tokenB, amountA, amountB);
     }
 
     function getAmountBNecesary(uint256 amountA) public view returns (uint256) {
@@ -75,15 +97,17 @@ contract LP {
         tokenB.transferFrom(msg.sender, address(this), amountB);
         reserveA += amountA;
         reserveB += amountB;
+        emit AddedLiquidity(address(tokenA), address(tokenB), amountA, amountB);
     }
 
     function removeLiquidity(uint256 amountA) enoughLiquidity(amountA) public {
         uint256 amountB = getAmountBNecesary(amountA);
-        
+
         IERC20(tokenA).transfer(msg.sender, amountA);
         IERC20(tokenB).transfer(msg.sender, amountB);
         reserveA -= amountA;
         reserveB -= amountB;
+        emit RemovedLiquidity(address(tokenA), address(tokenB), amountA, amountB);
     }
 
     function getReturn(
@@ -105,11 +129,13 @@ contract LP {
             IERC20(tokenB).transfer(msg.sender, amountOut);
             reserveA += amountIn;
             reserveB -= amountOut;
+            emit Swapped(address(tokenA), address(tokenB), amountIn, amountOut);
         } else {
             IERC20(tokenB).transferFrom(msg.sender, address(this), amountIn);
             IERC20(tokenA).transfer(msg.sender, amountOut);
             reserveB += amountIn;
             reserveA -= amountOut;
+            emit Swapped(address(tokenB), address(tokenA), amountIn, amountOut);
         }
     }
 
