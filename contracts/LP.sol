@@ -24,15 +24,18 @@ contract LP {
     uint256 public reserveA;
     uint256 public reserveB;
 
+    modifier notAlreadyInitialized() {
+        // Require that the contract has not been initialized yet
+        require(reserveA == 0 && reserveB == 0, "Already initialized");
+        _;
+    }
+
     constructor(IERC20 _tokenA, IERC20 _tokenB) {
         tokenA = _tokenA;
         tokenB = _tokenB;
     }
 
-    function firstAddLiquidity(uint256 amountA, uint256 amountB) public {
-        // Require that the contract has not been initialized yet
-        require(reserveA == 0 && reserveB == 0, "Already initialized");
-        
+    function firstAddLiquidity(uint256 amountA, uint256 amountB) notAlreadyInitialized public {
         tokenA.transferFrom(msg.sender, address(this), amountA);
         tokenB.transferFrom(msg.sender, address(this), amountB);
         reserveA += amountA;
