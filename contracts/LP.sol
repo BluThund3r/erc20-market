@@ -30,6 +30,29 @@ contract LP {
         _;
     }
 
+    modifier validSwapAmount(IERC20 fromToken, uint256 amountIn) {
+        uint256 amountOut = getReturn(fromToken, amountIn);
+        require(amountOut > 0, "Invalid swap amount");
+        _;
+    }
+
+    modifier validTokenAddress(IERC20 fromToken) {
+        require(
+            (fromToken == tokenA || fromToken == tokenB),
+            "Invalid token address"
+        );
+        _;
+    }
+
+    modifier enoughLiquidity(uint256 amountA) {
+        uint256 amountB = getAmountBNecesary(amountA);
+        require(
+            amountA <= reserveA && amountB <= reserveB,
+            "Insufficient liquidity"
+        );
+        _;
+    }
+
     constructor(IERC20 _tokenA, IERC20 _tokenB) {
         tokenA = _tokenA;
         tokenB = _tokenB;
@@ -54,12 +77,9 @@ contract LP {
         reserveB += amountB;
     }
 
-    function removeLiquidity(uint256 amountA) public {
+    function removeLiquidity(uint256 amountA) enoughLiquidity(amountA) public {
         uint256 amountB = getAmountBNecesary(amountA);
-        require(
-            amountA <= reserveA && amountB <= reserveB,
-            "Insufficient liquidity"
-        );
+        
         IERC20(tokenA).transfer(msg.sender, amountA);
         IERC20(tokenB).transfer(msg.sender, amountB);
         reserveA -= amountA;
@@ -69,11 +89,7 @@ contract LP {
     function getReturn(
         IERC20 fromToken,
         uint256 amountIn
-    ) public view returns (uint256) {
-        require(
-            (fromToken == tokenA || fromToken == tokenB),
-            "Invalid token address"
-        );
+    ) public view validTokenAddress(fromToken) returns (uint256) {
         if (fromToken == tokenA) {
             return (amountIn * reserveB) / (reserveA + amountIn);
         } else {
@@ -81,9 +97,8 @@ contract LP {
         }
     }
 
-    function swap(IERC20 fromToken, uint256 amountIn) public {
+    function swap(IERC20 fromToken, uint256 amountIn) validSwapAmount(fromToken, amountIn) public {
         uint256 amountOut = getReturn(fromToken, amountIn);
-        require(amountOut > 0, "Invalid swap amount");
 
         if (fromToken == tokenA) {
             IERC20(tokenA).transferFrom(msg.sender, address(this), amountIn);
