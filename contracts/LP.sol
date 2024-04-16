@@ -84,7 +84,7 @@ contract LP {
         tokenB.transferFrom(msg.sender, address(this), amountB);
         reserveA += amountA;
         reserveB += amountB;
-        AddedLiquidity(tokenA, tokenB, amountA, amountB);
+        emit AddedLiquidity(address(tokenA), address(tokenB), amountA, amountB);
     }
 
     function getAmountBNecesary(uint256 amountA) public view returns (uint256) {

@@ -4,9 +4,9 @@ const {
 const { expect } = require("chai");
 
 describe("ERC20", function () {
-  async function deployContract(initialTokens) {
+  async function deployContract(initialTokens, name, symbol) {
     const ERC20 = await ethers.getContractFactory("ERC20");
-    const erc20Contract = await ERC20.deploy(initialTokens);
+    const erc20Contract = await ERC20.deploy(initialTokens, name, symbol);
 
     return { erc20Contract };
   }
@@ -17,32 +17,54 @@ describe("ERC20", function () {
 
     const [owner, user2, user3, user4, user5] = await ethers.getSigners();
 
-    const erc20Contract = await ERC20.connect(owner).deploy(initialTokens);
+    const erc20Contract = await ERC20.connect(owner).deploy(
+      initialTokens,
+      "TestToken",
+      "TT"
+    );
 
     return { erc20Contract, owner, user2, user3, user4, user5 };
   }
 
   describe("Deployment (constructor)", function () {
     it("Should fail to deploy with a negative initial supply", async function () {
-      const error = await deployContract(-1).catch((e) => e);
+      const error = await deployContract(-1, "TestToken", "TT").catch((e) => e);
       expect(error.message).to.include("value=-1");
       expect(error.message).to.include("value out-of-bounds");
     });
 
     it("Should fail to deploy with supply of 0", async function () {
-      await expect(deployContract(0)).to.be.rejectedWith(
+      await expect(deployContract(0, "TestToken", "TT")).to.be.rejectedWith(
         "Initial supply should be a positive integer"
       );
     });
 
     it("Should fail to deploy with a an initial supply >= 2^256", async function () {
-      const error = await deployContract(2 ** 256).catch((e) => e);
+      const error = await deployContract(2 ** 256, "TestToken", "TT").catch(
+        (e) => e
+      );
       expect(error.message).to.include("overflow");
     });
 
     it("Should deploy the contract successfully and test the total supply to be 1M", async function () {
       const { erc20Contract } = await loadFixture(deployContractOK); // loadFixture saves a snapshot of the blockchain for efficiency
-      expect(await erc20Contract.totalSupply()).to.equal(10 ** 6);
+      expect(await erc20Contract.totalSupply()).to.equal(
+        10 ** 6,
+        "TestToken",
+        "TT"
+      );
+    });
+
+    it("Should should fail to deploy with an empty token name", async function () {
+      await expect(deployContract(10 ** 6, "", "TT")).to.be.rejectedWith(
+        "Name should not be empty"
+      );
+    });
+
+    it("Should should fail to deploy with an empty token symbol", async function () {
+      await expect(deployContract(10 ** 6, "TestToken", "")).to.be.rejectedWith(
+        "Symbol should not be empty"
+      );
     });
   });
 

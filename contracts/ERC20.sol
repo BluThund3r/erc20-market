@@ -4,15 +4,14 @@ pragma solidity >=0.7.0 <0.9.0;
 
 
 contract ERC20{
-
     uint256 nbTokens;   
 
     mapping(address => uint256) balances;
     mapping(address => mapping (address => uint256)) spendlimit;
 
-    string public name ="Custom ERC20";               
+    string public name;               
     uint8 public decimals = 18;                
-    string public symbol = 'CERC20';  
+    string public symbol;  
 
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Transfer(address indexed from, address indexed to, uint tokens);
@@ -28,9 +27,17 @@ contract ERC20{
         _;
     }
 
-    constructor(uint256 tokens) {
+    modifier constructorValidation(uint256 tokens, string memory _name, string memory _symbol) {
         require(tokens > 0, "Initial supply should be a positive integer");
+        require(bytes(_name).length > 0, "Name should not be empty");
+        require(bytes(_symbol).length > 0, "Symbol should not be empty");
+        _;
+    }
+
+    constructor(uint256 tokens, string memory _name, string memory _symbol) constructorValidation(tokens, _name, _symbol) {
         nbTokens = tokens;
+        name = _name;
+        symbol = _symbol;
         balances[msg.sender] = tokens;
     }
 
