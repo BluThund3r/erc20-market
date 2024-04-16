@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity ^0.8.0;
 
+import "./IERC20.sol";
 
-contract ERC20{
+contract ERC20 is IERC20{
     uint256 nbTokens;   
 
     mapping(address => uint256) balances;

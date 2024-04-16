@@ -17,17 +17,11 @@ contract LPRouter {
     mapping(address => address) public previous;
 
     function addToken(IERC20 _token) public {
-        bool tokenExists = false;
-        for (uint i = 0; i < tokens.length; i++) {
-            if (tokens[i] == address(_token)) {
-                tokenExists = true;
-                break;
-            }
-        }
-
-        if (!tokenExists) {
-            tokens.push(address(_token));
-        }
+        for (uint i = 0; i < tokens.length; i++) 
+            if (tokens[i] == address(_token)) 
+                return;
+            
+        tokens.push(address(_token));
     }
 
     // Observer Patern ???
