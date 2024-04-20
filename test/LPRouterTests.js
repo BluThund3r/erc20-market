@@ -227,7 +227,6 @@ describe("LPRouter Tests", function () {
 
     const amount = 100;
     await tokenA.connect(owner).transfer(user2, amount);
-    console.log("User2 balance", await tokenA.balanceOf(user2.address));
     const expectedResult = 82; // dupa calcule :)
     const swapTx = await LPRouter.connect(user2).swap(tokenA, tokenC, amount);
     await swapTx.wait();

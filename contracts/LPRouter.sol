@@ -129,11 +129,11 @@ contract LPRouter {
         IERC20 _tokenOut,
         uint256 _amountIn
     ) public {
-        // if(pools[address(_tokenIn)][address(_tokenOut)] != address(0)) {
-        //     LP lpContract = LP(pools[address(_tokenIn)][address(_tokenOut)]);
-        //     lpContract.swap(msg.sender, _tokenIn, _amountIn);
-        //     return;
-        // }
+        if(pools[address(_tokenIn)][address(_tokenOut)] != address(0)) {
+            LP lpContract = LP(pools[address(_tokenIn)][address(_tokenOut)]);
+            lpContract.swap(msg.sender, _tokenIn, _amountIn);
+            return;
+        }
 
         address[] memory path = minPath(_tokenIn, _tokenOut);
         require(path.length > 0, "No path found between tokens");
