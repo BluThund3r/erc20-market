@@ -151,18 +151,25 @@ contract LP {
         }
     }
 
-    function swap(IERC20 fromToken, uint256 amountIn) validSwapAmount(fromToken, amountIn) public {
+    function getOtherToken(IERC20 fromToken) public view validTokenAddress(fromToken) returns (IERC20) {
+        return fromToken == tokenA ? tokenB : tokenA;
+    }
+
+    function swap(address exchangerAddress, IERC20 fromToken, uint256 amountIn) validSwapAmount(fromToken, amountIn) public {
         uint256 amountOut = getReturn(fromToken, amountIn);
 
+        if(exchangerAddress == address(0))
+            exchangerAddress = msg.sender;
+
         if (fromToken == tokenA) {
-            IERC20(tokenA).transferFrom(msg.sender, address(this), amountIn);
-            IERC20(tokenB).transfer(msg.sender, amountOut);
+            IERC20(tokenA).transferFrom(exchangerAddress, address(this), amountIn);
+            IERC20(tokenB).transfer(exchangerAddress, amountOut);
             reserveA += amountIn;
             reserveB -= amountOut;
             emit Swapped(address(tokenA), address(tokenB), amountIn, amountOut);
         } else {
-            IERC20(tokenB).transferFrom(msg.sender, address(this), amountIn);
-            IERC20(tokenA).transfer(msg.sender, amountOut);
+            IERC20(tokenB).transferFrom(exchangerAddress, address(this), amountIn);
+            IERC20(tokenA).transfer(exchangerAddress, amountOut);
             reserveB += amountIn;
             reserveA -= amountOut;
             emit Swapped(address(tokenB), address(tokenA), amountIn, amountOut);

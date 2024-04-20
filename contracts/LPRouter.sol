@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./LP.sol";
+import "./Queue.sol";
 
 contract LPRouter {
     mapping(address => mapping(address => address)) public pools;
@@ -11,10 +12,121 @@ contract LPRouter {
     // Pentru dijkstra
     // Mapping to store the shortest distances from _tokenA
     mapping(address => uint256) public distances;
+
     // Mapping to store if a node was already visited
     mapping(address => bool) public visited;
+
     // Mapping to reconstruct path
     mapping(address => address) public previous;
+
+    // array to store the visited tokens so that we can clear them later
+    address[] private visitedTokens;
+
+    // queue needed for BFS (shortest path)
+    Queue queue;
+
+    constructor(address queueAddress) {
+        if(queueAddress != address(0))
+            queue = Queue(queueAddress);
+        else
+            queue = new Queue();
+    }
+
+    function minPath(
+        IERC20 _tokenA,
+        IERC20 _tokenB
+    ) private returns (address[] memory) {
+        address[] memory allTokens = getAllTokens(); 
+
+        queue.clear();
+        queue.push(address(_tokenA));
+        visitedTokens.push(address(_tokenA));
+        visited[address(_tokenA)] = true;
+        previous[address(_tokenA)] = address(0);
+        bool foundPath = false;
+
+        while(!queue.empty()) {
+            address current = queue.pop();
+            if(current == address(_tokenB)) {
+                foundPath = true;
+                break;
+            }
+
+            if(visited[current])
+                continue;
+            
+            visited[current] = true;
+            visitedTokens.push(current);
+               
+            for (uint i = 0; i < allTokens.length; i++) {
+                address neighbor = allTokens[i];
+                if (
+                    pools[current][neighbor] != address(0) && !visited[neighbor]
+                ) {
+                    queue.push(neighbor);
+                    previous[neighbor] = current;
+                }
+            }
+        }
+        
+        
+        if(!foundPath)
+            return new address[](0);
+
+        address[] memory path = buildPath(address(_tokenB));
+        clearVisited();
+        return path;
+    }
+
+    function buildPath(address destToken) private view returns (address[] memory) {
+        address[] memory path = new address[](tokens.length);
+        address currToken = destToken;
+        uint256 pathCount = 0;
+        while(currToken != address(0)) {
+            path[pathCount++] = currToken;
+            currToken = previous[currToken];
+        }
+
+        address[] memory finalPath = new address[](pathCount);
+        for (uint i = 0; i < pathCount / 2; i++) {
+            finalPath[i] = path[pathCount - 1 - i];
+        }
+
+        return finalPath;
+    }
+
+    function clearVisited() private {
+        for (uint i = 0; i < visitedTokens.length; i++) {
+            visited[visitedTokens[i]] = false;
+        }
+        visitedTokens = new address[](0);
+    }
+
+    function getLPsForPath(address[] memory path) private view returns (address[] memory) {
+        address[] memory lps = new address[](path.length - 1);
+        for (uint i = 0; i < path.length - 1; i++) {
+            lps[i] = pools[path[i]][path[i + 1]];
+        }
+        return lps;
+    }
+
+    function swapTokens(
+        IERC20 _tokenIn,
+        IERC20 _tokenOut,
+        uint256 _amountIn
+    ) public {
+        address[] memory path = minPath(_tokenIn, _tokenOut);
+        require(path.length > 0, "No path found between tokens");
+
+        address[] memory lps = getLPsForPath(path);
+        uint256 swapAmount = _amountIn;
+        IERC20 fromToken = _tokenIn;
+        for(uint i = 0; i < lps.length; i++) {
+            LP lpContract = LP(lps[i]);
+            lpContract.swap(msg.sender, fromToken, swapAmount);
+            fromToken = lpContract.getOtherToken(fromToken);
+        }
+    }
 
     function addToken(IERC20 _token) public {
         for (uint i = 0; i < tokens.length; i++) 
@@ -24,10 +136,10 @@ contract LPRouter {
         tokens.push(address(_token));
     }
 
-    // Observer Patern ???
     function createLP(IERC20 _tokenA, IERC20 _tokenB) public returns (LP) {
         LP lpContract = new LP(_tokenA, _tokenB);
         pools[address(_tokenA)][address(_tokenB)] = address(lpContract);
+        pools[address(_tokenB)][address(_tokenA)] = address(lpContract);
         // Add the tokens to the list of tokens
         addToken(_tokenA);
         addToken(_tokenB);
@@ -112,6 +224,8 @@ contract LPRouter {
     function getAllTokens() internal view returns (address[] memory) {
         return tokens;
     }
+
+    
 
     // function multiHopSwap(
     //     IERC20 _tokenIn,

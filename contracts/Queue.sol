@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-//! IMPORTANT: modifica tipul de date din uint in ce iti trebuie tie (probabil ERC20)
 contract Queue {
-  mapping(uint256 => uint) queue;
+  mapping(uint256 => address) queue;
   uint256 first = 1;
   uint256 last = 0;
 
@@ -12,16 +11,16 @@ contract Queue {
     _;
   } 
 
-  function push(uint data) public {
+  function push(address data) public {
     queue[++ last] = data;
   }
 
-  function pop() queueNotEmpty() public returns (uint data) {
+  function pop() queueNotEmpty() public returns (address data) {
     data = queue[first];
     delete queue[first ++];
   }
 
-  function peek() queueNotEmpty() public view returns (uint data) {
+  function peek() queueNotEmpty() public view returns (address data) {
     data = queue[first];
   }
 
@@ -31,5 +30,16 @@ contract Queue {
 
   function empty() public view returns (bool) {
     return last < first;
+  }
+
+  function clear() public {
+    if(last < 1)
+      return;
+
+    for (uint i = 0; i <= last; i ++) {
+      delete queue[i];
+    }
+    first = 1;
+    last = 0;
   }
 }
