@@ -25,6 +25,10 @@ contract LPRouter {
     // queue needed for BFS (shortest path)
     Queue queue;
 
+    event LPCreated(address indexed lpAddress, address indexed tokenA, address indexed tokenB);
+    event LogLPAddress(address indexed lpAddress);
+    event LogTokenAddress(address indexed tokenAddress);
+
     constructor(address queueAddress) {
         if(queueAddress != address(0))
             queue = Queue(queueAddress);
@@ -32,6 +36,7 @@ contract LPRouter {
             queue = new Queue();
     }
 
+    // BFS to find the shortest path between two tokens
     function minPath(
         IERC20 _tokenA,
         IERC20 _tokenB
@@ -40,8 +45,6 @@ contract LPRouter {
 
         queue.clear();
         queue.push(address(_tokenA));
-        visitedTokens.push(address(_tokenA));
-        visited[address(_tokenA)] = true;
         previous[address(_tokenA)] = address(0);
         bool foundPath = false;
 
@@ -88,7 +91,7 @@ contract LPRouter {
         }
 
         address[] memory finalPath = new address[](pathCount);
-        for (uint i = 0; i < pathCount / 2; i++) {
+        for (uint i = 0; i < pathCount; i++) {
             finalPath[i] = path[pathCount - 1 - i];
         }
 
@@ -110,11 +113,28 @@ contract LPRouter {
         return lps;
     }
 
-    function swapTokens(
+    function testLPs(address _tokenA, address _tokenB) public {
+        address[] memory path = minPath(IERC20(_tokenA), IERC20(_tokenB));
+        for(uint i = 0; i < path.length; i++) {
+            emit LogTokenAddress(path[i]);
+        }
+        address[] memory lps = getLPsForPath(path);
+        for (uint i = 0; i < lps.length; i++) {
+            emit LogLPAddress(lps[i]);
+        }
+    }
+
+    function swap(
         IERC20 _tokenIn,
         IERC20 _tokenOut,
         uint256 _amountIn
     ) public {
+        // if(pools[address(_tokenIn)][address(_tokenOut)] != address(0)) {
+        //     LP lpContract = LP(pools[address(_tokenIn)][address(_tokenOut)]);
+        //     lpContract.swap(msg.sender, _tokenIn, _amountIn);
+        //     return;
+        // }
+
         address[] memory path = minPath(_tokenIn, _tokenOut);
         require(path.length > 0, "No path found between tokens");
 
@@ -143,8 +163,20 @@ contract LPRouter {
         // Add the tokens to the list of tokens
         addToken(_tokenA);
         addToken(_tokenB);
+        emit LPCreated(address(lpContract), address(_tokenA), address(_tokenB));
         return lpContract;
     }
+
+
+
+
+
+
+
+
+
+
+
 
     function dijkstra(
         IERC20 __tokenA,
@@ -223,6 +255,10 @@ contract LPRouter {
 
     function getAllTokens() internal view returns (address[] memory) {
         return tokens;
+    }
+
+    function getLP(address _tokenA, address _tokenB) public view returns (address) {
+        return pools[_tokenA][_tokenB];
     }
 
     
