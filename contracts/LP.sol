@@ -155,7 +155,8 @@ contract LP {
         return fromToken == tokenA ? tokenB : tokenA;
     }
 
-    function swap(address exchangerAddress, IERC20 fromToken, uint256 amountIn) validSwapAmount(fromToken, amountIn) public {
+    function swap(address exchangerAddress, IERC20 fromToken, uint256 amountIn) 
+        validSwapAmount(fromToken, amountIn) public returns (uint256){
         uint256 amountOut = getReturn(fromToken, amountIn);
 
         if(exchangerAddress == address(0))
@@ -167,12 +168,14 @@ contract LP {
             reserveA += amountIn;
             reserveB -= amountOut;
             emit Swapped(address(tokenA), address(tokenB), amountIn, amountOut);
+            return amountOut;
         } else {
             IERC20(tokenB).transferFrom(exchangerAddress, address(this), amountIn);
             IERC20(tokenA).transfer(exchangerAddress, amountOut);
             reserveB += amountIn;
             reserveA -= amountOut;
             emit Swapped(address(tokenB), address(tokenA), amountIn, amountOut);
+            return amountOut;
         }
     }
 

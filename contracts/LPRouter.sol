@@ -143,7 +143,7 @@ contract LPRouter {
         IERC20 fromToken = _tokenIn;
         for(uint i = 0; i < lps.length; i++) {
             LP lpContract = LP(lps[i]);
-            lpContract.swap(msg.sender, fromToken, swapAmount);
+            swapAmount = lpContract.swap(msg.sender, fromToken, swapAmount);
             fromToken = lpContract.getOtherToken(fromToken);
         }
     }

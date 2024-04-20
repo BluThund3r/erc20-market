@@ -92,7 +92,7 @@ describe("LPRouter Tests", function () {
       .be.true;
   });
 
-  it("Should check the path and LPs between two tokens", async function () {
+  it("Should check the path and LPs between two tokens that are directly linked", async function () {
     const { erc20Contract: tokenA } = await deployERC20ContractOK();
     const { erc20Contract: tokenB } = await deployERC20ContractOK();
 
@@ -116,6 +116,39 @@ describe("LPRouter Tests", function () {
     expect(lps).to.deep.equal([LPAddress]);
   });
 
+  it("Should check the path and LPs between two tokens that are not directly linked", async function () {
+    const { erc20Contract: tokenA } = await deployERC20ContractOK();
+    const { erc20Contract: tokenB } = await deployERC20ContractOK();
+    const { erc20Contract: tokenC } = await deployERC20ContractOK();
+
+    const LPRouter = await deployLPRouterContractOK();
+
+    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    await LPtx.wait();
+    const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
+
+    const LP2tx = await LPRouter.createLP(tokenB, tokenC);
+    await LP2tx.wait();
+    const LP2Address = await LPRouter.getLP(tokenB.target, tokenC.target);
+
+    const testTx = await LPRouter.testLPs(tokenA.target, tokenC.target);
+    const testReceipt = await testTx.wait();
+
+    const logs = testReceipt.logs;
+    const tokenPath = logs
+      .filter((log) => log.fragment.name === "LogTokenAddress")
+      .map((log) => log.args[0]);
+    const lps = logs
+      .filter((log) => log.fragment.name === "LogLPAddress")
+      .map((log) => log.args[0]);
+    expect(tokenPath).to.deep.equal([
+      tokenA.target,
+      tokenB.target,
+      tokenC.target,
+    ]);
+    expect(lps).to.deep.equal([LPAddress, LP2Address]);
+  });
+
   it("Should swap tokens with direct link using LPRouter", async function () {
     const { erc20Contract: tokenA } = await deployERC20ContractOK();
     const { erc20Contract: tokenB } = await deployERC20ContractOK();
@@ -136,6 +169,9 @@ describe("LPRouter Tests", function () {
       initialLiquidity
     );
 
+    await tokenA.connect(user2).approve(LPaddress, 100);
+    await tokenB.connect(user2).approve(LPaddress, 100);
+
     expect(await LPRouter.getLP(tokenA.target, tokenB.target)).to.equal(
       LPaddress
     );
@@ -145,9 +181,59 @@ describe("LPRouter Tests", function () {
     const expectedResult =
       initialLiquidity -
       (initialLiquidity * initialLiquidity) / (initialLiquidity + amount);
-    const result = await LPRouter.connect(user2).swap(tokenA, tokenB, amount);
+    const swapTx = await LPRouter.connect(user2).swap(tokenA, tokenB, amount);
+    await swapTx.wait();
+    const result = await tokenB.balanceOf(user2.address);
 
-    expect(result).to.equal(expectedResult);
+    expect(result).to.equal(Math.floor(expectedResult));
+  });
+
+  it("Should swap tokens with indirect link using LPRouter", async function () {
+    const { erc20Contract: tokenA } = await deployERC20ContractOK();
+    const { erc20Contract: tokenB } = await deployERC20ContractOK();
+    const { erc20Contract: tokenC } = await deployERC20ContractOK();
+
+    const LPRouter = await deployLPRouterContractOK();
+    const [owner, user2] = await ethers.getSigners();
+
+    const initialLiquidity = 1000;
+    const allowance = initialLiquidity;
+    const LP1tx = await LPRouter.createLP(tokenA, tokenB);
+    const LP1Receipt = await LP1tx.wait();
+    const LP1address = await getLPAddress(LP1Receipt);
+    const LP1 = await ethers.getContractAt("LP", LP1address);
+
+    const LP2tx = await LPRouter.createLP(tokenB, tokenC);
+    const LP2Receipt = await LP2tx.wait();
+    const LP2address = await getLPAddress(LP2Receipt);
+    const LP2 = await ethers.getContractAt("LP", LP2address);
+
+    const LPdetails = [
+      [LP1, LP1address, tokenA, tokenB],
+      [LP2, LP2address, tokenB, tokenC],
+    ];
+
+    for (const [LP, LPAddress, token1, token2] of LPdetails) {
+      await token1.connect(owner).approve(LPAddress, allowance);
+      await token2.connect(owner).approve(LPAddress, allowance);
+      await LP.connect(owner).firstAddLiquidity(
+        initialLiquidity,
+        initialLiquidity
+      );
+
+      await token1.connect(user2).approve(LPAddress, allowance);
+      await token2.connect(user2).approve(LPAddress, allowance);
+    }
+
+    const amount = 100;
+    await tokenA.connect(owner).transfer(user2, amount);
+    console.log("User2 balance", await tokenA.balanceOf(user2.address));
+    const expectedResult = 82; // dupa calcule :)
+    const swapTx = await LPRouter.connect(user2).swap(tokenA, tokenC, amount);
+    await swapTx.wait();
+    const result = await tokenC.balanceOf(user2.address);
+
+    expect(result).to.equal(Math.floor(expectedResult));
   });
 
   it("Should run dijkstra", async function () {
