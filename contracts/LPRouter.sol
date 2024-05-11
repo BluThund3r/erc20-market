@@ -9,10 +9,6 @@ contract LPRouter {
 
     address[] public tokens;
 
-    // Pentru dijkstra
-    // Mapping to store the shortest distances from _tokenA
-    mapping(address => uint256) public distances;
-
     // Mapping to store if a node was already visited
     mapping(address => bool) public visited;
 
@@ -28,6 +24,7 @@ contract LPRouter {
     event LPCreated(address indexed lpAddress, address indexed tokenA, address indexed tokenB);
     event LogLPAddress(address indexed lpAddress);
     event LogTokenAddress(address indexed tokenAddress);
+    event LogPath(address[] indexed path);
 
     constructor(address queueAddress) {
         if(queueAddress != address(0))
@@ -40,7 +37,7 @@ contract LPRouter {
     function minPath(
         IERC20 _tokenA,
         IERC20 _tokenB
-    ) private returns (address[] memory) {
+    ) public returns (address[] memory) {
         address[] memory allTokens = getAllTokens(); 
 
         queue.clear();
@@ -78,6 +75,7 @@ contract LPRouter {
 
         address[] memory path = buildPath(address(_tokenB));
         clearVisited();
+        emit LogPath(path);
         return path;
     }
 
@@ -124,6 +122,13 @@ contract LPRouter {
         }
     }
 
+    function testMinPath(address _tokenA, address _tokenB) public {
+        address[] memory path = minPath(IERC20(_tokenA), IERC20(_tokenB));
+        for(uint i = 0; i < path.length; i++) {
+            emit LogTokenAddress(path[i]);
+        }
+    }
+
     function swap(
         IERC20 _tokenIn,
         IERC20 _tokenOut,
@@ -167,92 +172,6 @@ contract LPRouter {
         return lpContract;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    function dijkstra(
-        IERC20 __tokenA,
-        IERC20 __tokenB
-    ) public returns (address[] memory) {
-        uint256 MAX_UINT = type(uint256).max;
-
-        address _tokenA = address(__tokenA);
-        address _tokenB = address(__tokenB);
-
-        // Initializing the path result
-        address[] memory path = new address[](tokens.length);
-        uint256 pathCount = 0;
-
-        for (uint i = 0; i < tokens.length; i++) {
-            address addr = tokens[i];
-            distances[addr] = type(uint256).max;
-            visited[addr] = false;
-            previous[addr] = address(0);
-        }
-        
-        // Initialize distances and visited maps
-        distances[_tokenA] = 0;
-        visited[_tokenA] = false;
-
-        address current = _tokenA;
-        while (current != address(0) && current != _tokenB) {
-            address next = address(0);
-            uint256 shortest = MAX_UINT;
-
-            // Update distances to neighboring nodes
-            for (uint i = 0; i < getAllTokens().length; i++) {
-                address neighbor = getAllTokens()[i];
-                if (
-                    pools[current][neighbor] != address(0) && !visited[neighbor]
-                ) {
-                    uint256 alt = distances[current] + 1; // Assume each edge has the same weight
-                    if (alt < distances[neighbor]) {
-                        distances[neighbor] = alt;
-                        previous[neighbor] = current;
-                    }
-                }
-            }
-
-            // Finding the unvisited node with the smallest distance
-            for (uint i = 0; i < getAllTokens().length; i++) {
-                address neighbor = getAllTokens()[i];
-                if (!visited[neighbor] && distances[neighbor] < shortest) {
-                    shortest = distances[neighbor];
-                    next = neighbor;
-                }
-            }
-
-            // Mark as visited and move to the next node
-            visited[current] = true;
-            current = next;
-        }
-
-        // Reconstruct the path
-        address step = _tokenB;
-        if (previous[step] != address(0) || step == _tokenA) {
-            while (step != address(0)) {
-                path[pathCount++] = step;
-                step = previous[step];
-            }
-        }
-
-        // Reverse the path to correct the order from _tokenA to _tokenB
-        address[] memory finalPath = new address[](pathCount);
-        for (uint i = 0; i < pathCount; i++) {
-            finalPath[i] = path[pathCount - 1 - i];
-        }
-
-        return finalPath;
-    }
-
     function getAllTokens() internal view returns (address[] memory) {
         return tokens;
     }
@@ -260,31 +179,4 @@ contract LPRouter {
     function getLP(address _tokenA, address _tokenB) public view returns (address) {
         return pools[_tokenA][_tokenB];
     }
-
-    
-
-    // function multiHopSwap(
-    //     IERC20 _tokenIn,
-    //     IERC20 _tokenOut,
-    //     uint256 _amountIn
-    // ) public {
-
-    //     require(route.length >= 2, "Route must have at least two tokens");
-
-    //     IERC20(route[0]).transferFrom(msg.sender, address(this), amount);
-    //     uint256 swapAmount = amount;
-
-    //     for (uint i = 0; i < route.length - 1; i++) {
-    //         address currentToken = route[i];
-    //         address nextToken = route[i+1];
-    //         address poolAddress = pools[currentToken][nextToken];
-    //         require(poolAddress != address(0), "Pool does not exist for this token pair");
-
-    //         IERC20(currentToken).approve(poolAddress, swapAmount);
-    //         swapAmount = LiquidityPool(poolAddress).swapToken1ForToken2(swapAmount, address(this));
-    //     }
-
-    //     IERC20(route[route.length - 1]).transfer(msg.sender, swapAmount);
-    // }
-    // }
 }
