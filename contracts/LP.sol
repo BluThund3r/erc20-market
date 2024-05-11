@@ -77,7 +77,7 @@ contract LP {
         totalLPTokens = 0;
     }
 
-    //! only call this function after adding the liquidity to the reserves
+    //! only call this function BEFORE adding the liquidity to the reserves
     function computeLiquidityTokens(uint256 amountA) private view returns (uint256) {
         return totalLPTokens * amountA / reserveA;  
     }
@@ -88,6 +88,7 @@ contract LP {
         reserveA = amountA;
         reserveB = amountB;
         totalLPTokens = reserveA * reserveB * DECIMAL_FACTOR;
+        lpTokens[msg.sender] = totalLPTokens;
         emit AddedLiquidity(address(tokenA), address(tokenB), amountA, amountB);
     }
 
@@ -107,9 +108,9 @@ contract LP {
         uint256 amountB = getAmountBNecesary(amountA);
         tokenA.transferFrom(msg.sender, address(this), amountA);
         tokenB.transferFrom(msg.sender, address(this), amountB);
+        uint256 liquidityTokens = computeLiquidityTokens(amountA);
         reserveA += amountA;
         reserveB += amountB;
-        uint256 liquidityTokens = computeLiquidityTokens(amountA);
         lpTokens[msg.sender] += liquidityTokens;
         totalLPTokens += liquidityTokens;
         emit AddedLiquidity(address(tokenA), address(tokenB), amountA, amountB);

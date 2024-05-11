@@ -116,27 +116,32 @@ describe("LP Tests", function () {
     expect(await tokenB.balanceOf(LP.target)).to.equal(3000);
   });
 
-//   it("Should remove liquidity", async function () {
-//     const { LP, tokenA, tokenB } = await deployERC20AndLP();
+  it("Should remove liquidity", async function () {
+    const { LP, tokenA, tokenB, owner } = await deployERC20AndLP();
 
-//     const amountA = 500;
-//     const amountB = 1000;
-//     await approveAndFirstAddLiquidity(tokenA, tokenB, LP, amountA, amountB);
+    const amountA = 500;
+    const amountB = 1000;
+    await approveAndFirstAddLiquidity(tokenA, tokenB, LP, amountA, amountB);
 
-//     const amount = 1000;
-//     await approveAndAddLiquidity(
-//       tokenA,
-//       tokenB,
-//       LP,
-//       amount,
-//       LP.getAmountBNecesary(amount)
-//     );
+    const initialLiquidity = await LP.getMyLiquidity();
 
-//     await LP.removeLiquidity(amount);
+    const amount = 1000;
+    await approveAndAddLiquidity(
+      tokenA,
+      tokenB,
+      LP,
+      amount,
+      await LP.getAmountBNecesary(amount)
+    );
 
-//     expect(await tokenA.balanceOf(LP.target)).to.equal(500);
-//     expect(await tokenB.balanceOf(LP.target)).to.equal(1000);
-//   });
+    const myLiquidity = await LP.getMyLiquidity();
+    const liquidityDifference = myLiquidity - initialLiquidity;
+
+    await LP.removeLiquidity(liquidityDifference);
+
+    expect(await tokenA.balanceOf(LP.target)).to.equal(500);
+    expect(await tokenB.balanceOf(LP.target)).to.equal(1000);
+  });
 
   it("Should have a specific price 1", async function () {
     const { LP, tokenA, tokenB } = await deployERC20AndLP();
@@ -169,49 +174,19 @@ describe("LP Tests", function () {
     expect(await LP.getReturn(tokenA, amount)).to.equal(333);
   });
 
-//   it("Shoud swap tokens", async function () {
-//     const { LP, tokenA, tokenB } = await deployERC20AndLP();
+  it("Shoud swap tokens", async function () {
+    const { LP, tokenA, tokenB } = await deployERC20AndLP();
 
-//     const amountA = 1000;
-//     const amountB = 1000;
-//     await approveAndFirstAddLiquidity(tokenA, tokenB, LP, amountA, amountB);
+    const amountA = 1000;
+    const amountB = 1000;
+    await approveAndFirstAddLiquidity(tokenA, tokenB, LP, amountA, amountB);
 
-//     const amount = 100;
-//     await tokenA.approve(LP.target, amount);
-//     await LP.swap(tokenA, amount);
+    const amount = 100;
+    await tokenA.approve(LP.target, amount);
 
-//     expect(await tokenA.balanceOf(LP.target)).to.equal(1100);
-//     expect(await tokenB.balanceOf(LP.target)).to.equal(910);
-//   });
+    await LP.swap(ethers.ZeroAddress, tokenA, amount);
 
-  // it("Should not allow another user to remove liquidity", async function () {
-  //     const { erc20Contract: tokenA } = await deployERC20ContractOK();
-  //     const { erc20Contract: tokenB } = await deployERC20ContractOK();
-
-  //     const LP = await deployContract(tokenA, tokenB);
-
-  //     const amountA = 500;
-  //     const amountB = 1000;
-
-  //     await tokenA.approve(LP.target, amountA);
-  //     await tokenB.approve(LP.target, amountB);
-
-  //     await LP.firstAddLiquidity(amountA, amountB);
-
-  //     const [user2, user3, user4, user5, user6] = await ethers.getSigners();
-
-  //     const amount = 100;
-
-  //     await LP.connect(user6).removeLiquidity(amount);
-
-  //     // This should fail
-
-  //     const balanceAuser = await tokenA.balanceOf(user6.address);
-
-  //     console.log(balanceAuser.toString());
-
-  //     // expect balanceAuser to be 0
-  //     expect(balanceAuser).to.equal(0);
-
-  // });
+    expect(await tokenA.balanceOf(LP.target)).to.equal(1100);
+    expect(await tokenB.balanceOf(LP.target)).to.equal(910);
+  });
 });
