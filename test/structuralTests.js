@@ -17,7 +17,8 @@ describe("Structural Tests", function () {
     const erc20Contract = await ERC20.connect(owner).deploy(
       initialTokens,
       name,
-      symbol
+      symbol,
+      false
     );
 
     return erc20Contract;

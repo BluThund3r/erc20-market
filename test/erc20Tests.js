@@ -6,7 +6,12 @@ const { expect } = require("chai");
 describe("ERC20", function () {
   async function deployContract(initialTokens, name, symbol) {
     const ERC20 = await ethers.getContractFactory("ERC20");
-    const erc20Contract = await ERC20.deploy(initialTokens, name, symbol);
+    const erc20Contract = await ERC20.deploy(
+      initialTokens,
+      name,
+      symbol,
+      false
+    );
 
     return { erc20Contract };
   }
@@ -20,7 +25,8 @@ describe("ERC20", function () {
     const erc20Contract = await ERC20.connect(owner).deploy(
       initialTokens,
       "TestToken",
-      "TT"
+      "TT",
+      false
     );
 
     return { erc20Contract, owner, user2, user3, user4, user5 };

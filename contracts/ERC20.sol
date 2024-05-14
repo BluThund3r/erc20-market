@@ -13,6 +13,7 @@ contract ERC20 is IERC20{
     string public name;               
     uint8 public decimals = 18;                
     string public symbol;  
+    address public router;
 
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Transfer(address indexed from, address indexed to, uint tokens);
@@ -35,11 +36,25 @@ contract ERC20 is IERC20{
         _;
     }
 
-    constructor(uint256 tokens, string memory _name, string memory _symbol) constructorValidation(tokens, _name, _symbol) {
+    modifier isCallerRouter() {
+        require(msg.sender == router, "Only the router can call this function");
+        _;
+    }
+
+    constructor(uint256 tokens, string memory _name, string memory _symbol, bool routed) constructorValidation(tokens, _name, _symbol) {
         nbTokens = tokens;
         name = _name;
         symbol = _symbol;
-        balances[msg.sender] = tokens;
+        if(routed)
+            router = msg.sender;
+        else {
+            router = address(0);
+            balances[msg.sender] = nbTokens;
+        }
+    }
+
+    function setInitialBalance(address owner) isCallerRouter public {
+        balances[owner] = nbTokens;
     }
 
     function totalSupply() public view returns (uint256) { 
@@ -77,6 +92,12 @@ contract ERC20 is IERC20{
         spendlimit[from][msg.sender] = spendlimit[from][msg.sender]- tokens;
         balances[to] = balances[to] + tokens;
         emit Transfer(from, to, tokens);
+        return true;
+    }
+
+    function approveForUser(address owner, address spender, uint tokens) isCallerRouter public returns (bool){
+        spendlimit[owner][spender] = tokens;
+        emit Approval(owner, spender, tokens);
         return true;
     }
 }
