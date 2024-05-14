@@ -142,6 +142,8 @@ contract LPRouter {
         LP lpContract = new LP(_tokenA, _tokenB);
         pools[address(_tokenA)][address(_tokenB)] = address(lpContract);
         pools[address(_tokenB)][address(_tokenA)] = address(lpContract);
+        addToken(_tokenA);
+        addToken(_tokenB);
         emit LPCreated(address(lpContract), address(_tokenA), address(_tokenB));
         return lpContract;
     }
