@@ -37,7 +37,7 @@ contract ERC20 is IERC20{
     }
 
     modifier isCallerRouter() {
-        require(msg.sender == router, "Only the router can call this function");
+        require(msg.sender == router, string(abi.encodePacked("Only the router can call this function\n", "Router: ", router, "\nCaller: ", msg.sender)));
         _;
     }
 

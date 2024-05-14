@@ -112,6 +112,7 @@ contract LPRouter {
     ) public {
         if(pools[address(_tokenIn)][address(_tokenOut)] != address(0)) {
             LP lpContract = LP(pools[address(_tokenIn)][address(_tokenOut)]);
+            _tokenIn.approveForUser(msg.sender, address(lpContract), _amountIn);  // approve the LP contract to spend the tokens
             lpContract.swap(msg.sender, _tokenIn, _amountIn);
             return;
         }

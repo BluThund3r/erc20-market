@@ -151,11 +151,22 @@ describe("LPRouter Tests", function () {
   });
 
   it("Should swap tokens with direct link using LPRouter", async function () {
-    const { erc20Contract: tokenA } = await deployERC20ContractOK();
-    const { erc20Contract: tokenB } = await deployERC20ContractOK();
+    // const { erc20Contract: tokenA } = await deployERC20ContractOK();
+    // const { erc20Contract: tokenB } = await deployERC20ContractOK();
 
     const LPRouter = await deployLPRouterContractOK();
     const [owner, user2] = await ethers.getSigners();
+
+    const tokenATx = await LPRouter.createToken(10 ** 6, "TestTokenA", "TTA");
+    const tokenAReceipt = await tokenATx.wait();
+    const tokenBTx = await LPRouter.createToken(10 ** 6, "TestTokenB", "TTB");
+    const tokenBReceipt = await tokenBTx.wait();
+
+    const tokenAAddress = tokenAReceipt.logs[0].args[0];
+    const tokenBAddress = tokenBReceipt.logs[0].args[0];
+
+    const tokenA = await ethers.getContractAt("ERC20", tokenAAddress);
+    const tokenB = await ethers.getContractAt("ERC20", tokenBAddress);
 
     const initialLiquidity = 1000;
     const LPtx = await LPRouter.createLP(tokenA, tokenB);
@@ -170,8 +181,8 @@ describe("LPRouter Tests", function () {
       initialLiquidity
     );
 
-    await tokenA.connect(user2).approve(LPaddress, 100);
-    await tokenB.connect(user2).approve(LPaddress, 100);
+    // await tokenA.connect(user2).approve(LPaddress, 100);
+    // await tokenB.connect(user2).approve(LPaddress, 100);
 
     expect(await LPRouter.getLP(tokenA.target, tokenB.target)).to.equal(
       LPaddress
