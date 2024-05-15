@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
-import "../style.css";
+import "../index.css";
 import { useDispatch } from "react-redux";
 import { connectUser } from "../services/connectionService";
 import { setWalletProvider } from "../state/walletProviderSlice";

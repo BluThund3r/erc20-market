@@ -11,6 +11,7 @@ export default defineConfig({
     exclude: [
       "@nomicfoundation/edr-win32-x64-msvc",
       "@nomicfoundation/solidity-analyzer-win32-x64-msvc",
+      "hardhat",
     ],
   },
   assetsInclude: ["**/*.node"],

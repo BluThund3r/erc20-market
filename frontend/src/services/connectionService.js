@@ -1,4 +1,4 @@
-import { ethers } from "hardhat";
+import { ethers } from "ethers";
 
 export async function connectUser() {
   if (window.ethereum) {
@@ -8,7 +8,7 @@ export async function connectUser() {
         method: "eth_requestAccounts",
       });
       console.log(accounts);
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new ethers.provider.Web3Provider(window.ethereum);
       return provider;
     } catch (e) {
       console.error(e);

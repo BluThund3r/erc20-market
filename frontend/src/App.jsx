@@ -7,11 +7,11 @@ import UserDeatils from "./pages/UserDetails";
 import CreateLPPage from "./pages/CreateLPPage";
 import SwapTokensPage from "./pages/SwapTokensPage";
 import ConnectWalletPage from "./pages/ConnectWalletPage";
-// import WalletProvider from "./context/WalletProvider"; // THIS IMPORT CAUSES 165 ERRORS :)
+
 
 function App() {
   const provider = useSelector((state) => state.walletProvider.provider);
-
+  console.log("provider", provider);
   return (
     <div className="App">
       <Router>
