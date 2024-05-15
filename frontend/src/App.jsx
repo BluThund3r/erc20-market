@@ -2,13 +2,16 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateTokenPage from "./pages/CreateTokenPage";
 import React from "react";
+import { useSelector } from "react-redux";
 import UserDeatils from "./pages/UserDetails";
 import CreateLPPage from "./pages/CreateLPPage";
 import SwapTokensPage from "./pages/SwapTokensPage";
 import ConnectWalletPage from "./pages/ConnectWalletPage";
-import { isUserConnected } from "./services/connectionService";
+// import WalletProvider from "./context/WalletProvider"; // THIS IMPORT CAUSES 165 ERRORS :)
 
 function App() {
+  const provider = useSelector((state) => state.walletProvider.provider);
+
   return (
     <div className="App">
       <Router>
@@ -17,7 +20,7 @@ function App() {
             exact
             path="/"
             element={
-              isUserConnected() ? <UserDeatils /> : <ConnectWalletPage />
+              provider !== null ? <UserDeatils /> : <ConnectWalletPage />
             }
           />
           <Route path="/createToken" element={<CreateTokenPage />} />

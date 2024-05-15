@@ -11,14 +11,14 @@ până la **3 puncte** bonus pentru complexitatea proiectului (pot substitui tes
 - [x] utilizarea tipurilor de date specifice Solidity (mappings, address)
 - [x] înregistrarea de events
 - [x] utilizarea de modifiers
-- [ ] exemple pentru toate tipurile de funcții (external, pure, view etc.)
+- [x] exemple pentru toate tipurile de funcții (external, pure, view etc.)
 - [ ] exemple de transfer de eth
 - [ ] ilustrarea interacțiunii dintre smart contracte
 - [ ] deploy pe o rețea locală sau pe o rețea de test Ethereum
 
 ### Cerinte optionale (maxim **2 puncte**) - se pot alege cateva elemente de mai jos:
 
-- [ ] utilizare librării
+- [x] utilizare librării
 - [x] implementarea de teste (cu tool-uri la alegerea echipelor)
 - [ ] utilizarea unor elemente avansate de OOP (interfețe, moștenire) pentru
       implementarea unor pattern-uri utilizate frecvent (exemple Proxy Pattern,
