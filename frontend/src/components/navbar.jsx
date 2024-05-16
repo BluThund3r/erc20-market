@@ -18,8 +18,8 @@ export default function Navbar() {
         <Typography variant="h6" className={classes.title} align="left">
           <span className="font-bold">ERC20 Token Market</span>
         </Typography>
-        <Button color="inherit" onClick={() => navigate("/")}>
-          User Details
+        <Button color="inherit" onClick={() => navigate("/buy")}>
+          Buy Tokens
         </Button>
         <Button color="inherit" onClick={() => navigate("/swap")}>
           Swap tokens
@@ -30,8 +30,8 @@ export default function Navbar() {
         <Button color="inherit" onClick={() => navigate("/createLP")}>
           Create LP
         </Button>
-        <Button color="inherit" onClick={() => navigate("/buy")}>
-          Buy Tokens
+        <Button color="inherit" onClick={() => navigate("/")}>
+          User Details
         </Button>
       </Toolbar>
     </AppBar>

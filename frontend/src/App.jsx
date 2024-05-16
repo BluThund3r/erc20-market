@@ -8,6 +8,8 @@ import SwapTokensPage from "./pages/SwapTokensPage";
 import ConnectWalletPage from "./pages/ConnectWalletPage";
 import BuyTokensPage from "./pages/BuyTokensPage";
 import Navbar from "./components/navbar";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const userAddress = useSelector((state) => state.userDetails.address);
@@ -30,6 +32,7 @@ function App() {
           <Route path="/buy" element={<BuyTokensPage />} />
         </Routes>
       </Router>
+      <ToastContainer />
     </div>
   );
 }

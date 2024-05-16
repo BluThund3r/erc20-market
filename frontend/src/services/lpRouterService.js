@@ -1,13 +1,13 @@
-import { ethers } from "ethers";
+import { BrowserProvider, ethers } from "ethers";
 import { addresses } from "../contracts/contractsAddresses";
 import LPRouter from "../contracts/abis/LPRouter.json";
 
 const lpRouterAbi = LPRouter.abi;
+const lpRouterAddress = addresses.lpRouterAddress;
 
 export async function getTokensOfUser(provider) {
   const signer = await provider.getSigner();
-  const contractAddress = addresses.lpRouterAddress;
-  const lpRouter = new ethers.Contract(contractAddress, lpRouterAbi, signer);
+  const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, signer);
   const tokensDetails = await lpRouter.myTokens();
   return tokensDetails.map((tokenDetails) => {
     const [tokenName, tokenSymbol, tokenBalance] = tokenDetails.split("%");
@@ -17,4 +17,18 @@ export async function getTokensOfUser(provider) {
       balance: parseFloat(tokenBalance),
     };
   });
+}
+
+export async function createToken(tokenName, tokenSymbol, tokenSupply) {
+  const provider = new BrowserProvider(window.ethereum);
+  const signer = await provider.getSigner();
+  const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, signer);
+  const createTokenTx = await lpRouter.createToken(
+    tokenName,
+    tokenSymbol,
+    tokenSupply
+  );
+  const createTokenReceipt = await createTokenTx.wait();
+
+  console.log("createTokenReceipt", createTokenReceipt);
 }
