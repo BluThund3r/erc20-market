@@ -29,6 +29,7 @@ contract LPRouter {
     event LogLPAddress(address indexed lpAddress);
     event LogTokenAddress(address indexed tokenAddress);
     event LogPath(address[] indexed path);
+    event LogToken(string indexed tokenName, string indexed tokenSymbol, uint256 indexed totalTokens);
 
     modifier lpNotExistent(IERC20 _tokenA, IERC20 _tokenB) {
         require(pools[address(_tokenA)][address(_tokenB)] == address(0), "LP already exists");
@@ -51,6 +52,8 @@ contract LPRouter {
         else
             queue = new Queue();
     }
+
+
 
     // BFS to find the shortest path between two tokens
     function minPath(
@@ -96,6 +99,18 @@ contract LPRouter {
         for(uint i = 0; i < path.length; i++) {
             emit LogTokenAddress(path[i]);
         }
+    }
+
+    function myTokens() view public returns (string[] memory) {
+        string[] memory tokenDetails = new string[](tokens.length);
+        for (uint i = 0; i < tokens.length; i++) {
+            ERC20 token = ERC20(tokens[i]);
+            uint256 myBalance = token.balanceOf(msg.sender);
+            if (myBalance > 0)
+                tokenDetails[i] = string(abi.encodePacked(token.name(), "%", token.symbol(), "%", myBalance));
+        }
+
+        return tokenDetails;
     }
 
     function createToken(uint256 totalTokens, string memory _name, string memory _symbol) tokenNotExistent(_name) public {

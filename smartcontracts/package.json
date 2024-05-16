@@ -1,5 +1,9 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "localDeploy": "npx hardhat run scripts/deploy.js --network localhost && node scripts/copyAbis.js",
+    "remoteDeploy": "npx hardhat run scripts/deploy.js --network sepolia && node scripts/copyAbis.js"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.2"
