@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-
 export async function connectUser() {
   if (window.ethereum) {
     console.log("Metamask is installed");
@@ -7,9 +5,8 @@ export async function connectUser() {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
-      console.log(accounts);
-      const provider = new ethers.provider.Web3Provider(window.ethereum);
-      return provider;
+      console.log("Accounts", accounts);
+      return accounts[0]; 
     } catch (e) {
       console.error(e);
     }

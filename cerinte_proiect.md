@@ -12,9 +12,9 @@ până la **3 puncte** bonus pentru complexitatea proiectului (pot substitui tes
 - [x] înregistrarea de events
 - [x] utilizarea de modifiers
 - [x] exemple pentru toate tipurile de funcții (external, pure, view etc.)
-- [ ] exemple de transfer de eth
-- [ ] ilustrarea interacțiunii dintre smart contracte
-- [ ] deploy pe o rețea locală sau pe o rețea de test Ethereum
+- [x] exemple de transfer de eth
+- [x] ilustrarea interacțiunii dintre smart contracte
+- [x] deploy pe o rețea locală sau pe o rețea de test Ethereum
 
 ### Cerinte optionale (maxim **2 puncte**) - se pot alege cateva elemente de mai jos:
 
@@ -31,7 +31,7 @@ până la **3 puncte** bonus pentru complexitatea proiectului (pot substitui tes
 
 ### Cerinte obligatorii (maxim **1.5 puncte**) - minim pentru promovare
 
-- [ ] Utilizarea unei librării web3 (exemple web3 sau ethersjs) și conectarea cu un
+- [x] Utilizarea unei librării web3 (exemple web3 sau ethersjs) și conectarea cu un
       Web3 Provider pentru accesarea unor informații generale despre conturi
       (adresa, balance)
 - [ ] Inițierea tranzacțiilor de transfer sau de apel de funcții, utilizând clase din

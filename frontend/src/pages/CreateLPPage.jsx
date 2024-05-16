@@ -1,5 +1,3 @@
-import React from "react";
-
 function CreateLPPage() {
   return <div>CreateLPPage</div>;
 }

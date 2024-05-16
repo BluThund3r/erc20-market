@@ -1,17 +1,15 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import CreateTokenPage from "./pages/CreateTokenPage";
-import React from "react";
 import { useSelector } from "react-redux";
 import UserDeatils from "./pages/UserDetails";
 import CreateLPPage from "./pages/CreateLPPage";
 import SwapTokensPage from "./pages/SwapTokensPage";
 import ConnectWalletPage from "./pages/ConnectWalletPage";
 
-
 function App() {
-  const provider = useSelector((state) => state.walletProvider.provider);
-  console.log("provider", provider);
+  const userAddress = useSelector((state) => state.userDetails.address);
+  console.log("user address", userAddress);
   return (
     <div className="App">
       <Router>
@@ -20,7 +18,7 @@ function App() {
             exact
             path="/"
             element={
-              provider !== null ? <UserDeatils /> : <ConnectWalletPage />
+              userAddress !== "" ? <UserDeatils /> : <ConnectWalletPage />
             }
           />
           <Route path="/createToken" element={<CreateTokenPage />} />
