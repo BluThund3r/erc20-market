@@ -2,6 +2,7 @@
   "name": "hardhat-project",
   "scripts": {
     "startNetwork": "npx hardhat node",
+    "compile": "npx hardhat compile",
     "waitAndDeployLocal": "wait-on http://localhost:8545 && npm run localDeploy",
     "startLocal": "concurrently \"npm run startNetwork\" \"npm run localDeploy\"",
     "localDeploy": "npx hardhat run scripts/deploy.js --network localhost && node scripts/copyAbis.js",

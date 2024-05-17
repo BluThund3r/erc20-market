@@ -31,8 +31,8 @@ contract LPRouter {
     event LogPath(address[] indexed path);
     event LogToken(string indexed tokenName, string indexed tokenSymbol, uint256 indexed totalTokens);
 
-    modifier lpNotExistent(IERC20 _tokenA, IERC20 _tokenB) {
-        require(pools[address(_tokenA)][address(_tokenB)] == address(0), "LP already exists");
+    modifier lpNotExistent(address _tokenA, address _tokenB) {
+        require(pools[_tokenA][_tokenB] == address(0), "LP already exists");
         _;
     }
 
@@ -152,6 +152,21 @@ contract LPRouter {
         }
     }
 
+    function getTokens() public view returns (string[] memory, string[] memory, address[] memory) {
+        string[] memory tokenNames = new string[](tokens.length);
+        string[] memory tokenSymbols = new string[](tokens.length);
+        address[] memory tokenAddresses = new address[](tokens.length);
+
+        for (uint i = 0; i < tokens.length; i++) {
+            ERC20 token = ERC20(tokens[i]);
+            tokenNames[i] = token.name();
+            tokenSymbols[i] = token.symbol();
+            tokenAddresses[i] = tokens[i];
+        }
+
+        return (tokenNames, tokenSymbols, tokenAddresses);
+    }
+
     function addToken(IERC20 _token) public {
         for (uint i = 0; i < tokens.length; i++) 
             if (tokens[i] == address(_token)) 
@@ -160,7 +175,9 @@ contract LPRouter {
         tokens.push(address(_token));
     }
 
-    function createLP(IERC20 _tokenA, IERC20 _tokenB) lpNotExistent(_tokenA, _tokenB) public returns (LP) {
+    function createLP(address _tokenAAddress, address _tokenBAddress) lpNotExistent(_tokenAAddress, _tokenBAddress) public returns (LP) {
+        IERC20 _tokenA = IERC20(_tokenAAddress);
+        IERC20 _tokenB = IERC20(_tokenBAddress);
         LP lpContract = new LP(_tokenA, _tokenB);
         pools[address(_tokenA)][address(_tokenB)] = address(lpContract);
         pools[address(_tokenB)][address(_tokenA)] = address(lpContract);
