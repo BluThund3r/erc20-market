@@ -1,6 +1,7 @@
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { createToken } from "../services/lpRouterService";
 
 function CreateTokenPage() {
   const [formData, setFormData] = useState({
@@ -9,14 +10,30 @@ function CreateTokenPage() {
     supply: 0,
   });
 
-  const handleSubmit = (event) => {
-    event.preventDefault(); // Prevents the default form submission behavior
-    // Call your function here, passing the form data as needed
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     console.log("Form submitted with data:", formData);
+    if (isNaN(formData.supply)) {
+      toast.error("Supply must be a number");
+      return;
+    }
+
+    if (formData.name.length === 0) {
+      toast.error("Token name cannot be empty");
+      return;
+    }
+
+    if (formData.symbol.length === 0) {
+      toast.error("Token symbol cannot be empty");
+      return;
+    }
+
     if (formData.supply <= 0) {
       toast.error("Supply must be greater than 0");
       return;
     }
+
+    await createToken(formData.name, formData.symbol, formData.supply);
   };
 
   const handleChange = (event) => {

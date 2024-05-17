@@ -1,11 +1,18 @@
 {
   "name": "hardhat-project",
   "scripts": {
+    "startNetwork": "npx hardhat node",
+    "waitAndDeployLocal": "wait-on http://localhost:8545 && npm run localDeploy",
+    "startLocal": "concurrently \"npm run startNetwork\" \"npm run localDeploy\"",
     "localDeploy": "npx hardhat run scripts/deploy.js --network localhost && node scripts/copyAbis.js",
     "remoteDeploy": "npx hardhat run scripts/deploy.js --network sepolia && node scripts/copyAbis.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.2"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
   }
 }

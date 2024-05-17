@@ -50,14 +50,8 @@ function UserDetails() {
               className="flex flex-col items-center border border-gray-300 p-4 mt-4"
             >
               <p className="text-xl">
-                <span className="font-bold">Token Name:</span> {token.name}
-              </p>
-              <p className="text-xl">
-                <span className="font-bold">Token Symbol:</span> {token.symbol}
-              </p>
-              <p className="text-xl">
-                <span className="font-bold">Token Balance:</span>{" "}
-                {token.balance}
+                <span className="font-bold">{token.name}</span>: {token.balance}{" "}
+                <span className="font-bold">{token.symbol}</span>
               </p>
             </div>
           );

@@ -101,16 +101,22 @@ contract LPRouter {
         }
     }
 
-    function myTokens() view public returns (string[] memory) {
-        string[] memory tokenDetails = new string[](tokens.length);
+    function myTokens() view public returns (string[] memory, string[] memory, uint256[] memory) {
+        string[] memory tokenNames = new string[](tokens.length);
+        string[] memory tokenSymbols = new string[](tokens.length);
+        uint256[] memory balances = new uint256[](tokens.length);
+
         for (uint i = 0; i < tokens.length; i++) {
             ERC20 token = ERC20(tokens[i]);
             uint256 myBalance = token.balanceOf(msg.sender);
-            if (myBalance > 0)
-                tokenDetails[i] = string(abi.encodePacked(token.name(), "%", token.symbol(), "%", myBalance));
+            if (myBalance > 0) {
+                tokenNames[i] = token.name();
+                tokenSymbols[i] = token.symbol();
+                balances[i] = myBalance;
+            }
         }
 
-        return tokenDetails;
+        return (tokenNames, tokenSymbols, balances);
     }
 
     function createToken(uint256 totalTokens, string memory _name, string memory _symbol) tokenNotExistent(_name) public {

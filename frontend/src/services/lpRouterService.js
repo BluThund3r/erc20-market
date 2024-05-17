@@ -8,26 +8,35 @@ const lpRouterAddress = addresses.lpRouterAddress;
 export async function getTokensOfUser(provider) {
   const signer = await provider.getSigner();
   const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, signer);
-  const tokensDetails = await lpRouter.myTokens();
-  return tokensDetails.map((tokenDetails) => {
-    const [tokenName, tokenSymbol, tokenBalance] = tokenDetails.split("%");
-    return {
-      name: tokenName,
-      symbol: tokenSymbol,
-      balance: parseFloat(tokenBalance),
-    };
-  });
+  const [tokenNames, tokenSymbols, balances] = await lpRouter
+    .connect(signer)
+    .myTokens();
+  return tokenNames
+    .map((name, index) => {
+      console.log(
+        "name",
+        name,
+        "symbol",
+        tokenSymbols[index],
+        "balance",
+        balances[index]
+      );
+      return {
+        name,
+        symbol: tokenSymbols[index],
+        balance: parseFloat(balances[index]),
+      };
+    })
+    .filter((token) => token.balance > 0);
 }
 
 export async function createToken(tokenName, tokenSymbol, tokenSupply) {
   const provider = new BrowserProvider(window.ethereum);
   const signer = await provider.getSigner();
   const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, signer);
-  const createTokenTx = await lpRouter.createToken(
-    tokenName,
-    tokenSymbol,
-    tokenSupply
-  );
+  const createTokenTx = await lpRouter
+    .connect(signer)
+    .createToken(tokenSupply, tokenName, tokenSymbol);
   const createTokenReceipt = await createTokenTx.wait();
 
   console.log("createTokenReceipt", createTokenReceipt);
