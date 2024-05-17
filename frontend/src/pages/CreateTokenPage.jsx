@@ -33,7 +33,13 @@ function CreateTokenPage() {
       return;
     }
 
-    await createToken(formData.name, formData.symbol, formData.supply);
+    try {
+      await createToken(formData.name, formData.symbol, formData.supply);
+      toast.success("Token created successfully");
+    } catch (error) {
+      console.error("Error creating token:", error);
+      toast.error("Error creating token");
+    }
   };
 
   const handleChange = (event) => {
