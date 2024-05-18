@@ -91,47 +91,25 @@ function SwapTokensPage() {
                             name="fromToken"
                         >
                             <option value="">From</option>
-                            <option key={1} value={1}>
+                            <option key={LPs.find((lp) => lp.address === formData.LP).tokenAaddress} value={LPs.find((lp) => lp.address === formData.LP).tokenAaddress}>
                                 From: {LPs.find((lp) => lp.address === formData.LP).tokenAname}
                             </option>
-                            <option key={2} value={2}>
+                            <option key={LPs.find((lp) => lp.address === formData.LP).tokenBaddress} value={LPs.find((lp) => lp.address === formData.LP).tokenBaddress}>
                                 From: {LPs.find((lp) => lp.address === formData.LP).tokenBname}
                             </option>
                         </select>
                     )}
 
                 </div>
-                <div className="flex w-screen gap-10 justify-center mt-5">
-                    <input
-                        className="p-2"
-                        type="number"
-                        onChange={handleChange}
-                        placeholder="ammount"
-                        name="amountIn"
-                    />
-                </div>
-                <div className="mt-10">
-                    <Button variant="contained" type="submit" onSubmit={handleSubmit}>
-                        Swap
-                    </Button>
-                </div>
-            </form>
-
-            {/* {LPs.map((lp, index) => {
-                return (
-                    <form onSubmit={handleSubmit}>
-
-
-
-                        <div>LP Address: {lp.address} {lp.tokenA} {lp.tokenB}</div>
-                        <div> Swap tokenA for tokenB:</div>
+                {formData.fromToken && (
+                    <div>
                         <div className="flex w-screen gap-10 justify-center mt-5">
                             <input
                                 className="p-2"
                                 type="number"
                                 onChange={handleChange}
-                                placeholder="tokenA Amount"
-                                name="tokenAAmount"
+                                placeholder="ammount"
+                                name="amountIn"
                             />
                         </div>
                         <div className="mt-10">
@@ -139,11 +117,11 @@ function SwapTokensPage() {
                                 Swap
                             </Button>
                         </div>
-                    </form>
+                    </div>
+                )}
 
-                );
-            })} */}
 
+            </form>
         </>);
 
 
