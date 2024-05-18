@@ -40,5 +40,5 @@ până la **3 puncte** bonus pentru complexitatea proiectului (pot substitui tes
 ### Cerinte optionale (maxim **2.5 puncte**) - se pot alege cateva elemente din lista de mai jos:
 
 - [ ] Tratare events (Observer Pattern)
-- [ ] Analiza gas-cost (estimare cost și fixare limită de cost)
+- [x] Analiza gas-cost (estimare cost și fixare limită de cost)
 - [ ] Control al stării tranzacțiilor (tratare excepții)
