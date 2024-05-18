@@ -67,7 +67,7 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
     const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
     expect(ethers.isAddress(LPAddress)).to.be.true;
@@ -80,9 +80,9 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
-    const LP2tx = await LPRouter.createLP(tokenB, tokenC);
+    const LP2tx = await LPRouter.createLP(tokenB.target, tokenC.target);
     await LP2tx.wait();
 
     const LPAddress1 = await LPRouter.getLP(tokenA.target, tokenB.target);
@@ -99,7 +99,7 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
     const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
 
@@ -124,11 +124,11 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
     const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
 
-    const LP2tx = await LPRouter.createLP(tokenB, tokenC);
+    const LP2tx = await LPRouter.createLP(tokenB.target, tokenC.target);
     await LP2tx.wait();
     const LP2Address = await LPRouter.getLP(tokenB.target, tokenC.target);
 
@@ -169,7 +169,7 @@ describe("LPRouter Tests", function () {
     const tokenB = await ethers.getContractAt("ERC20", tokenBAddress);
 
     const initialLiquidity = 1000;
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     const LPReceipt = await LPtx.wait();
     const LPaddress = await getLPAddress(LPReceipt);
     const LP = await ethers.getContractAt("LP", LPaddress);
@@ -206,7 +206,7 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
     const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
 
@@ -231,11 +231,11 @@ describe("LPRouter Tests", function () {
 
     const LPRouter = await deployLPRouterContractOK();
 
-    const LPtx = await LPRouter.createLP(tokenA, tokenB);
+    const LPtx = await LPRouter.createLP(tokenA.target, tokenB.target);
     await LPtx.wait();
     const LPAddress = await LPRouter.getLP(tokenA.target, tokenB.target);
 
-    const LP2tx = await LPRouter.createLP(tokenB, tokenC);
+    const LP2tx = await LPRouter.createLP(tokenB.target, tokenC.target);
     await LP2tx.wait();
     const LP2Address = await LPRouter.getLP(tokenB.target, tokenC.target);
 

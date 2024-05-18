@@ -34,11 +34,11 @@ până la **3 puncte** bonus pentru complexitatea proiectului (pot substitui tes
 - [x] Utilizarea unei librării web3 (exemple web3 sau ethersjs) și conectarea cu un
       Web3 Provider pentru accesarea unor informații generale despre conturi
       (adresa, balance)
-- [ ] Inițierea tranzacțiilor de transfer sau de apel de funcții, utilizând clase din
+- [x] Inițierea tranzacțiilor de transfer sau de apel de funcții, utilizând clase din
       librăriile web3
 
 ### Cerinte optionale (maxim **2.5 puncte**) - se pot alege cateva elemente din lista de mai jos:
 
 - [ ] Tratare events (Observer Pattern)
-- [ ] Analiza gas-cost (estimare cost și fixare limită de cost)
+- [x] Analiza gas-cost (estimare cost și fixare limită de cost)
 - [ ] Control al stării tranzacțiilor (tratare excepții)
