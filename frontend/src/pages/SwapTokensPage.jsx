@@ -42,7 +42,7 @@ function SwapTokensPage() {
                 formData.fromToken,
                 formData.amountIn
             );
-            toast.success("LP created successfully");
+            toast.success("Swap successfully");
         } catch (error) {
             console.error("Error swaping:", error.message);
             toast.error(`Error swaping \n(${getRevertReason(error.message)})`);
