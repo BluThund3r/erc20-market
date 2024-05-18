@@ -109,7 +109,15 @@ export async function getLPs() {
 export async function swap(lpAddress, fromToken, amountIn) {
     const provider = new BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
-    const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, signer);
-    const swapTx = await lpRouter.connect(signer).swap(lpAddress, amountIn);
+    const lp = new ethers.Contract(lpAddress, lpAbi, provider);
+    // sign allowance for lp contract
+    const token = new ethers.Contract(fromToken, erc20Abi, signer);
+    const approveTx = await token.connect(signer).approve(lpAddress, amountIn);
+    await approveTx.wait();
+
+    const swapTx = await lp.connect(signer).swap(signer.address, fromToken, amountIn);
     await swapTx.wait();
+
+    console.log("swapTx", swapTx);
+
 }

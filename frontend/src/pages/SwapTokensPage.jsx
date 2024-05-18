@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { getLPs } from "../services/lpRouterService";
 import { BrowserProvider, ethers } from "ethers";
 import { Button } from "@mui/material";
-// import { swap } from "../services/lpRouterService";
-
-
+import { swap } from "../services/lpRouterService";
+import { toast } from "react-toastify";
 
 function SwapTokensPage() {
     const [LPs, setLPs] = useState([]);
@@ -40,7 +39,7 @@ function SwapTokensPage() {
         try {
             await swap(
                 formData.LP,
-
+                formData.fromToken,
                 formData.amountIn
             );
             toast.success("LP created successfully");
