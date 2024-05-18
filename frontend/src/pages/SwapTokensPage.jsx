@@ -15,7 +15,10 @@ function SwapTokensPage() {
         // remove duplicates from lps
         const uniqueLps = lps.filter((lp, index, self) => self.findIndex((t) => t.address === lp.address) === index);
 
-        setLPs(uniqueLps);
+        // remove 0x0 address
+        const uniqueLpsNew = uniqueLps.filter((lp) => lp.address !== "0x0000000000000000000000000000000000000000");
+
+        setLPs(uniqueLpsNew);
     }
 
     useEffect(() => {
@@ -51,7 +54,7 @@ function SwapTokensPage() {
                     <option value="">Choose the Liquidity Pool</option>
                     {LPs.map((lp) => (
                         <option key={lp.address} value={lp.address}>
-                            {lp.tokenA} to {lp.tokenB}
+                            {lp.tokenAname} to {lp.tokenBname}
                         </option>
                     ))}
                 </select>

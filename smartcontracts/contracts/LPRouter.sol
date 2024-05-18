@@ -230,23 +230,49 @@ contract LPRouter {
     function getLPs()
         public
         view
-        returns (address[] memory, address[] memory, address[] memory)
+        returns (
+            address[] memory,
+            address[] memory,
+            address[] memory,
+            string[] memory,
+            string[] memory
+        )
     {
         address[] memory lps = new address[](tokens.length * tokens.length);
-        address[] memory tokensA = new address[](tokens.length * tokens.length);
-        address[] memory tokensB = new address[](tokens.length * tokens.length);
+        address[] memory tokenAaddresses = new address[](
+            tokens.length * tokens.length
+        );
+        address[] memory tokenBaddresses = new address[](
+            tokens.length * tokens.length
+        );
+        string[] memory tokenAnames = new string[](
+            tokens.length * tokens.length
+        );
+        string[] memory tokenBnames = new string[](
+            tokens.length * tokens.length
+        );
         uint index = 0;
         for (uint i = 0; i < tokens.length; i++) {
             for (uint j = i + 1; j < tokens.length; j++) {
                 if (pools[tokens[i]][tokens[j]] != address(0)) {
                     lps[index] = pools[tokens[i]][tokens[j]];
-                    tokensA[index] = tokens[i];
-                    tokensB[index] = tokens[j];
+                    tokenAaddresses[index] = tokens[i];
+                    tokenBaddresses[index] = tokens[j];
+                    ERC20 tokenA = ERC20(tokens[i]);
+                    tokenAnames[index] = tokenA.symbol();
+                    ERC20 tokenB = ERC20(tokens[j]);
+                    tokenBnames[index] = tokenB.symbol();
                     index++;
                 }
             }
         }
 
-        return (lps, tokensA, tokensB);
+        return (
+            lps,
+            tokenAaddresses,
+            tokenBaddresses,
+            tokenAnames,
+            tokenBnames
+        );
     }
 }

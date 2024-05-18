@@ -92,13 +92,15 @@ export async function createLP(
 export async function getLPs() {
     const provider = new BrowserProvider(window.ethereum);
     const lpRouter = new ethers.Contract(lpRouterAddress, lpRouterAbi, provider);
-    const [lps, tokensA, tokensB] = await lpRouter.getLPs();
+    const [lps, tokenAaddresses, tokenBaddresses, tokenAnames, tokenBnames] = await lpRouter.getLPs();
 
     return lps.map((lp, index) => {
         return {
             address: lp,
-            tokenA: tokensA[index],
-            tokenB: tokensB[index],
+            tokenAaddress: tokenAaddresses[index],
+            tokenBaddress: tokenBaddresses[index],
+            tokenAname: tokenAnames[index],
+            tokenBname: tokenBnames[index],
         };
     });
 
